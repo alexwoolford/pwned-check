@@ -65,11 +65,17 @@ Passwords can be checked by posting to the web services `password-lookup` endpoi
     $ python
     Python 2.7.12 |Anaconda custom (x86_64)| (default, Jul  2 2016, 17:43:17) 
     >>> import requests
-    
-    >>> requests.post('http://localhost:8080/password-lookup', data="mySecretPassword").content
-    '{"sha1":"F032680299B077AFB95093DE4082F625502B8251","password":"mySecretPassword","hashExists":true}'
-    
-    >>> requests.post('http://localhost:8080/password-lookup', data="$%37^!IUS@)LL").content
-    '{"sha1":"80A7DEA1E43E447A06E596532F69D802A4474764","password":"$%37^!IUS@)LL","hashExists":false}'
+    >>> 
+    >>> def lookup_password(password):
+    ...     return requests.post('http://localhost:8080/password-lookup', data=password).content
+    ... 
+    >>> passwords = ["mySecretPassword", "$%37^!IUS@)LL", "biggus dickus"]
+    >>> 
+    >>> for password in passwords:
+    ...     print lookup_password(password)
+    ... 
+    {"sha1":"F032680299B077AFB95093DE4082F625502B8251","password":"mySecretPassword","hashExists":true}
+    {"sha1":"80A7DEA1E43E447A06E596532F69D802A4474764","password":"$%37^!IUS@)LL","hashExists":false}
+    {"sha1":"AB35C171990106153BDE747965D44E312482403E","password":"biggus dickus","hashExists":true}
 
 We can see that the rather obvious "mySecretPassword" was found (the SHA-1 hash exists), whereas the string of random characters was not.    
