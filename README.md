@@ -67,9 +67,9 @@ Passwords can be checked by posting to the web services `password-lookup` endpoi
     >>> import requests
     
     >>> requests.post('http://localhost:8080/password-lookup', data="mySecretPassword").content
-    'keyvalues={F032680299B077AFB95093DE4082F625502B8251/hash_exists:hash_exists/1502698929386/Put/vlen=4/seqid=0}'
+    '{"sha1":"F032680299B077AFB95093DE4082F625502B8251","password":"mySecretPassword","hashExists":true}'
     
     >>> requests.post('http://localhost:8080/password-lookup', data="$%37^!IUS@)LL").content
-    'keyvalues=NONE'
+    '{"sha1":"80A7DEA1E43E447A06E596532F69D802A4474764","password":"$%37^!IUS@)LL","hashExists":false}'
 
-We can see that the rather obvious "mySecretPassword" was found, whereas the string of random characters was not.    
+We can see that the rather obvious "mySecretPassword" was found (the SHA-1 hash exists), whereas the string of random characters was not.    

@@ -40,7 +40,7 @@ public class Controller {
         lookupRecord.setSha1(sha1);
         lookupRecord.setPassword(password);
         lookupRecord.setHashExists((Boolean) hbaseTemplate.get("password", sha1, mapper));
-        
+
         return lookupRecord;
 
     }
