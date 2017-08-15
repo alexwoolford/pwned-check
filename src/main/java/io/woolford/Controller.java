@@ -10,6 +10,10 @@ import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.data.hadoop.hbase.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+import static com.oracle.jrockit.jfr.ContentType.Bytes;
+
 
 @RestController
 @EnableAutoConfiguration
@@ -21,20 +25,23 @@ public class Controller {
     private HbaseTemplate hbaseTemplate;
 
     @RequestMapping(value = "/password-lookup", method = RequestMethod.POST)
-    private String lookupPassword(@RequestBody String password) throws Exception {
+    private LookupRecord lookupPassword(@RequestBody String password) throws Exception {
 
         String sha1 = DigestUtils.sha1Hex(password).toUpperCase();
 
-        RowMapper<String> mapper = new RowMapper<String>() {
+        RowMapper mapper = new RowMapper<Object>() {
             @Override
-            public String mapRow(Result result, int rowNum) throws Exception {
-                return result.toString();
+            public Boolean mapRow(Result result, int rowNum) throws Exception {
+                return result.containsColumn("hash_exists".getBytes(), "hash_exists".getBytes());
             }
         };
 
-        String result = hbaseTemplate.get("password", sha1, "hash_exists", "hash_exists", mapper);
-
-        return result;
+        LookupRecord lookupRecord = new LookupRecord();
+        lookupRecord.setSha1(sha1);
+        lookupRecord.setPassword(password);
+        lookupRecord.setHashExists((Boolean) hbaseTemplate.get("password", sha1, mapper));
+        
+        return lookupRecord;
 
     }
 
